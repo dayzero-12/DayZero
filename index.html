@@ -873,7 +873,16 @@
             
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
                 <div class="card">
-                    <h3 style="color: var(--burgundy); margin-bottom: 16px;">October 2026 Calendar Grid (Click a Day)</h3>
+                    <!-- Dynamic Month & Navigation Controls -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="color: var(--burgundy); margin:0;" id="calendar-month-title">October 2026</h3>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn-primary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="prevMonth()">← Prev</button>
+                            <button class="btn-primary" style="padding: 4px 10px; font-size: 0.8rem; background: var(--gold);" onclick="todayMonth()">Today</button>
+                            <button class="btn-primary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="nextMonth()">Next →</button>
+                        </div>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;" id="calendar-grid-container">
                         <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Mon</div>
                         <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Tue</div>
@@ -944,6 +953,8 @@
         accountName: localStorage.getItem('dayzero_name') || 'Scholar Account',
         gmail: localStorage.getItem('dayzero_gmail') || '',
         theme: localStorage.getItem('dayzero_theme') || 'light',
+        calYear: 2026,
+        calMonth: 9, // 0 = Jan, 9 = October
         satAttempted: 0,
         satCorrect: 0,
         library: [
@@ -973,7 +984,7 @@
         testScore: 0,
         currentSatType: 'math',
         satQuestionIndex: 0,
-        selectedArchiveDay: null,
+        selectedArchiveDateKey: null,
         pomodoroTimer: null,
         pomodoroSeconds: 1500,
         isPomodoroRunning: false,
@@ -1531,9 +1542,38 @@
         `).join('');
     }
 
-    // Study Archive
+    // Dynamic Calendar Engine (Study Archive)
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function prevMonth() {
+        state.calMonth--;
+        if(state.calMonth < 0) {
+            state.calMonth = 11;
+            state.calYear--;
+        }
+        renderCalendarGrid();
+    }
+
+    function nextMonth() {
+        state.calMonth++;
+        if(state.calMonth > 11) {
+            state.calMonth = 0;
+            state.calYear++;
+        }
+        renderCalendarGrid();
+    }
+
+    function todayMonth() {
+        const now = new Date();
+        state.calYear = now.getFullYear();
+        state.calMonth = now.getMonth();
+        renderCalendarGrid();
+    }
+
     function renderCalendarGrid() {
         const grid = document.getElementById('calendar-grid-container');
+        document.getElementById('calendar-month-title').innerText = `${monthNames[state.calMonth]} ${state.calYear}`;
+
         let html = `
             <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Mon</div>
             <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Tue</div>
@@ -1543,23 +1583,36 @@
             <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Sat</div>
             <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Sun</div>
         `;
-        for(let i=1; i<=31; i++) {
-            let entry = state.archiveDays[i];
+
+        const firstDayIndex = new Date(state.calYear, state.calMonth, 1).getDay();
+        // Adjust for Mon-Sun starting index
+        const startOffset = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+        const totalDaysInMonth = new Date(state.calYear, state.calMonth + 1, 0).getDate();
+
+        // Empty padding cells for previous month days
+        for(let p = 0; p < startOffset; p++) {
+            html += `<div style="background:transparent; border:1px dashed transparent;"></div>`;
+        }
+
+        for(let day = 1; day <= totalDaysInMonth; day++) {
+            let dateKey = `${state.calYear}-${String(state.calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            let entry = state.archiveDays[dateKey];
             let headingText = entry && entry.heading ? `<div style="font-size:0.6rem; color:var(--burgundy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;">${entry.heading}</div>` : '';
             let bg = entry ? 'var(--bg-card)' : 'var(--bg-input)';
             let border = entry ? 'var(--burgundy)' : 'var(--border-vintage)';
-            html += `<div onclick="openArchiveModal(${i})" style="cursor:pointer; aspect-ratio:1; background:${bg}; border:1px solid ${border}; border-radius:6px; padding:4px; font-size:0.8rem; transition: all 0.2s; overflow:hidden;"><strong style="color:var(--burgundy);">${i}</strong>${headingText}</div>`;
+
+            html += `<div onclick="openArchiveModal('${dateKey}')" style="cursor:pointer; aspect-ratio:1; background:${bg}; border:1px solid ${border}; border-radius:6px; padding:4px; font-size:0.8rem; transition: all 0.2s; overflow:hidden;"><strong style="color:var(--burgundy);">${day}</strong>${headingText}</div>`;
         }
+
         grid.innerHTML = html;
-        
         let activeDaysCount = Object.keys(state.archiveDays).length;
         document.getElementById('prog-streak-val').innerText = `${activeDaysCount} Days`;
     }
 
-    function openArchiveModal(day) {
-        state.selectedArchiveDay = day;
-        document.getElementById('archive-modal-title').innerText = `October ${day}, 2026 — Day Log`;
-        const existing = state.archiveDays[day] || { heading: '', text: '' };
+    function openArchiveModal(dateKey) {
+        state.selectedArchiveDateKey = dateKey;
+        document.getElementById('archive-modal-title').innerText = `${dateKey} — Scholar's Day Log`;
+        const existing = state.archiveDays[dateKey] || { heading: '', text: '' };
         document.getElementById('archive-modal-heading').value = existing.heading || '';
         document.getElementById('archive-modal-text').value = existing.text || '';
         document.getElementById('archive-modal').style.display = 'flex';
@@ -1572,7 +1625,7 @@
     function saveArchiveDay() {
         const heading = document.getElementById('archive-modal-heading').value.trim();
         const text = document.getElementById('archive-modal-text').value;
-        state.archiveDays[state.selectedArchiveDay] = { heading, text };
+        state.archiveDays[state.selectedArchiveDateKey] = { heading, text };
         localStorage.setItem('dayzero_archive_days', JSON.stringify(state.archiveDays));
         closeArchiveModal();
         renderCalendarGrid();
@@ -1589,9 +1642,9 @@
     }
 
     function exportArchiveCSV() {
-        let csvContent = "data:text/csv;charset=utf-8,Day,Heading,Notes\n";
-        for(let day in state.archiveDays) {
-            let row = `"${day}","${state.archiveDays[day].heading || ''}","${(state.archiveDays[day].text || '').replace(/"/g, '""')}"`;
+        let csvContent = "data:text/csv;charset=utf-8,DateKey,Heading,Notes\n";
+        for(let key in state.archiveDays) {
+            let row = `"${key}","${state.archiveDays[key].heading || ''}","${(state.archiveDays[key].text || '').replace(/"/g, '""')}"`;
             csvContent += row + "\r\n";
         }
         const encodedUri = encodeURI(csvContent);
