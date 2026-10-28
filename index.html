@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DAYZERO — Scholar's Journal</title>
     <!-- Cormorant Garamond & Montserrat Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap">
@@ -77,7 +77,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar Styling */
+        /* PC Desktop Sidebar */
         sidebar {
             width: 260px;
             background: var(--bg-espresso);
@@ -242,7 +242,7 @@
             align-items: center;
         }
 
-        /* Workspace Main */
+        /* Main Content Container */
         main {
             flex: 1;
             padding: 32px 48px;
@@ -363,12 +363,156 @@
             max-width: 520px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
+
+        /* Palette Swatch Grid Styles */
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .palette-swatch {
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 10px 6px;
+            text-align: center;
+            border: 2px solid var(--border-vintage);
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        .palette-swatch:hover {
+            transform: scale(1.05);
+            border-color: var(--burgundy);
+        }
+
+        /* Mobile Layout Components (Hidden on PC) */
+        .mobile-header-bar, .mobile-bottom-nav, .mobile-drawer-overlay {
+            display: none;
+        }
+
+        /* Dedicated Phone Layout Media Query */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                padding-bottom: 70px;
+            }
+
+            sidebar {
+                display: none !important;
+            }
+
+            .mobile-header-bar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: var(--bg-espresso);
+                color: #fff;
+                padding: 12px 16px;
+                position: sticky;
+                top: 0;
+                z-index: 99;
+                border-bottom: 2px solid var(--border-vintage);
+            }
+
+            .mobile-header-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.3rem;
+                font-weight: bold;
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: var(--bg-espresso);
+                border-top: 2px solid var(--border-vintage);
+                justify-content: space-around;
+                align-items: center;
+                padding: 8px 0;
+                z-index: 999;
+            }
+
+            .mobile-nav-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                background: none;
+                border: none;
+                color: var(--sidebar-text);
+                font-size: 0.65rem;
+                gap: 3px;
+                cursor: pointer;
+                flex: 1;
+            }
+
+            .mobile-nav-btn span.icon {
+                font-size: 1.2rem;
+            }
+
+            .mobile-nav-btn.active {
+                color: var(--gold-light);
+                font-weight: 600;
+            }
+
+            main {
+                padding: 16px;
+                max-height: none;
+                overflow-y: visible;
+            }
+
+            .grid-2col {
+                grid-template-columns: 1fr !important;
+            }
+
+            h2.page-title, h2 {
+                font-size: 2rem !important;
+            }
+
+            .mobile-drawer-overlay {
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.6);
+                z-index: 1001;
+                display: none;
+                justify-content: flex-end;
+            }
+
+            .mobile-drawer-content {
+                background: var(--bg-espresso);
+                width: 75%;
+                height: 100%;
+                padding: 24px 16px;
+                color: var(--sidebar-text);
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                box-shadow: -4px 0 15px rgba(0,0,0,0.3);
+            }
+        }
     </style>
 </head>
 <body>
 
+<!-- Phone Top Header Bar -->
+<div class="mobile-header-bar">
+    <div class="mobile-header-title">
+        <div class="brand-logo-box" style="margin:0; padding:3px 6px; font-size:0.9rem;">D.</div>
+        <span>DAYZERO</span>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.75rem; background: var(--bg-card); color: var(--text-dark);" onclick="openThemeModal()">🌓</button>
+        <button class="btn-primary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="openAccountModal()">⚙️</button>
+    </div>
+</div>
+
 <div id="app-container">
-    <!-- Sidebar -->
+    <!-- PC Desktop Sidebar -->
     <sidebar id="main-sidebar">
         <div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -414,7 +558,7 @@
             </div>
 
             <div style="margin-top: 12px; display: flex; gap: 8px;">
-                <button class="btn-primary" style="flex: 1; background: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-vintage); padding: 6px; font-size: 0.75rem;" onclick="toggleTheme()">🌓 Theme</button>
+                <button class="btn-primary" style="flex: 1; background: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-vintage); padding: 6px; font-size: 0.75rem;" onclick="openThemeModal()">🌓 Theme & Colors</button>
             </div>
 
             <div class="account-footer">
@@ -483,7 +627,7 @@
             </div>
 
             <!-- Hero Banner Grid -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
                 <div class="card" style="background: linear-gradient(135deg, var(--bg-card) 0%, var(--border-vintage) 100%); border-left: 5px solid var(--burgundy); margin:0; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gold); font-weight: 600;">Daily Reflection & Scholarly Tenet</span>
@@ -505,7 +649,7 @@
             </div>
 
             <!-- Detailed Overview Content Blocks & Pomodoro Timer -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px;">
                 <div class="card" style="margin:0;">
                     <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">Critical Milestones</span>
                     <h3 style="color: var(--burgundy); margin-bottom: 12px; font-size: 1.4rem; font-family: 'Cormorant Garamond', serif;">Upcoming Exam Dates</h3>
@@ -537,14 +681,14 @@
                     <h3 style="color: var(--burgundy); margin-bottom: 8px; font-size: 1.4rem; font-family: 'Cormorant Garamond', serif;">Scholar Workspace ☁️</h3>
                     <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;" id="cloud-status-text">Status: Logged in locally</p>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="openAccountModal()">Manage Profile / Email</button>
+                        <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="openAccountModal()">Manage Profile</button>
                         <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem; background: var(--olive-studied);" onclick="triggerCloudSync()">Sync Local Data to Cloud</button>
                     </div>
                 </div>
             </div>
 
             <!-- At-a-Glance Summary Tiles -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
                 <div class="card" style="margin:0;">
                     <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);">Tasks For Today</span>
                     <div id="dash-tasks-count" style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight:700; color:var(--burgundy); margin-top:8px;">0</div>
@@ -574,7 +718,7 @@
             <h2 style="font-size: 2.8rem; font-family: 'Cormorant Garamond', serif; color: var(--text-dark);">The study <span style="font-style:italic; color:var(--burgundy);">planner.</span></h2>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">Put your thoughts on paper. Give your goals a place to begin.</p>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div class="card">
                     <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">Add a New Entry</span>
                     <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--burgundy); margin-bottom: 16px;">What needs your attention?</h3>
@@ -716,7 +860,7 @@
             <h2 class="page-title">My Academic Progress</h2>
             <p class="page-subtitle">Analytics, subject mastery distribution, and study streaks.</p>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
                 <div class="card" style="margin:0;">
                     <h3 style="color: var(--burgundy); margin-bottom: 12px;">Subject Mastery Breakdown</h3>
                     <div style="position: relative; height: 200px; width: 100%;">
@@ -731,7 +875,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
                 <div class="card" style="margin:0; text-align:center;">
                     <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);">Current Streak</span>
                     <div id="prog-streak-val" style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight:700; color:var(--burgundy); margin-top:6px;">0 Days</div>
@@ -756,7 +900,7 @@
             <p class="page-subtitle">Tabular error log with importance flagging for targeted revision.</p>
             
             <div class="card" style="margin-bottom: 20px;">
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px;">
+                <div class="grid-2col" style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px;">
                     <input type="text" id="weak-concept" placeholder="Concept or question missed..." style="margin:0;">
                     <select id="weak-subject" style="margin:0;">
                         <option>Physics</option>
@@ -771,7 +915,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" style="overflow-x:auto;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
                     <thead>
                         <tr style="border-bottom: 2px solid var(--border-vintage); color: var(--burgundy);">
@@ -794,7 +938,7 @@
             <h2 class="page-title">Notes Studio & Active Recall</h2>
             <p class="page-subtitle">Upload text, PDFs, or screenshots (.png, .jpg) to extract text via OCR, generate flashcards, or take an interactive scored practice test.</p>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div class="card">
                     <h3 style="color: var(--burgundy); margin-bottom: 12px;">Source Material & OCR Scanner</h3>
                     <textarea id="notes-text-area" rows="6" placeholder="Paste notes or upload a screenshot/PDF..."></textarea>
@@ -871,7 +1015,7 @@
             </div>
             <p class="page-subtitle" style="margin-bottom: 24px;">Click any date on the calendar below to log daily notes and tasks.</p>
             
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            <div class="grid-2col" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
                 <div class="card">
                     <!-- Dynamic Month & Navigation Controls -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -883,14 +1027,14 @@
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;" id="calendar-grid-container">
-                        <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Mon</div>
-                        <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Tue</div>
-                        <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Wed</div>
-                        <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Thu</div>
-                        <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Fri</div>
-                        <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Sat</div>
-                        <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Sun</div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;" id="calendar-grid-container">
+                        <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Mon</div>
+                        <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Tue</div>
+                        <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Wed</div>
+                        <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Thu</div>
+                        <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Fri</div>
+                        <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Sat</div>
+                        <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Sun</div>
                     </div>
                 </div>
 
@@ -906,10 +1050,89 @@
     </main>
 </div>
 
+<!-- Phone Bottom Navigation Bar -->
+<div class="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" id="mob-btn-overview" onclick="switchTabMobile('overview', this)">
+        <span class="icon">📖</span>
+        <span>Overview</span>
+    </button>
+    <button class="mobile-nav-btn" id="mob-btn-planner" onclick="switchTabMobile('planner', this)">
+        <span class="icon">📅</span>
+        <span>Planner</span>
+    </button>
+    <button class="mobile-nav-btn" id="mob-btn-sat" onclick="switchTabMobile('sat', this)">
+        <span class="icon">✨</span>
+        <span>SAT</span>
+    </button>
+    <button class="mobile-nav-btn" id="mob-btn-notes" onclick="switchTabMobile('notes', this)">
+        <span class="icon">📝</span>
+        <span>Notes</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="toggleMobileDrawer()">
+        <span class="icon">☰</span>
+        <span>More</span>
+    </button>
+</div>
+
+<!-- Phone "More Modules" Slide-Out Drawer -->
+<div class="mobile-drawer-overlay" id="mobile-drawer" onclick="toggleMobileDrawer()">
+    <div class="mobile-drawer-content" onclick="event.stopPropagation()">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:8px;">
+            <h3 style="color:#fff;">All Desk Modules</h3>
+            <button class="btn-primary" style="padding:4px 8px; font-size:0.75rem;" onclick="toggleMobileDrawer()">✕</button>
+        </div>
+        <div class="nav-item" onclick="switchTabMobile('library'); toggleMobileDrawer();">📚 Learning Library</div>
+        <div class="nav-item" onclick="switchTabMobile('progress'); toggleMobileDrawer();">📊 My Progress</div>
+        <div class="nav-item" onclick="switchTabMobile('weakness'); toggleMobileDrawer();">⚠️ Weakness Ledger</div>
+        <div class="nav-item" onclick="switchTabMobile('diary'); toggleMobileDrawer();">🔒 Private Diary</div>
+        <div class="nav-item" onclick="switchTabMobile('archive'); toggleMobileDrawer();">🗂 Study Archive</div>
+    </div>
+</div>
+
+<!-- Dedicated Theme & Color Studio Modal -->
+<div class="modal-overlay" id="theme-modal">
+    <div class="modal-content">
+        <h3 style="color: var(--burgundy); margin-bottom: 12px;">Theme & Color Studio 🎨</h3>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 12px; border-radius: 6px; border: 1px solid var(--border-vintage); margin-bottom: 16px;">
+            <div>
+                <strong>Light / Dark Mode</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Switch between espresso & parchment aesthetics</div>
+            </div>
+            <button class="btn-primary" onclick="toggleThemeMode()" style="padding: 6px 14px;">Toggle 🌓</button>
+        </div>
+
+        <h4 style="color: var(--burgundy); font-size: 1rem; margin-bottom: 8px;">Curated Scholarly Color Palettes</h4>
+        <div class="palette-grid">
+            <div class="palette-swatch" style="background:#6b2d39; color:#fff;" onclick="applyPresetPalette('#6b2d39', '#ebdcc9')">Dark Academia</div>
+            <div class="palette-swatch" style="background:#264653; color:#fff;" onclick="applyPresetPalette('#264653', '#e9edc9')">Forest Library</div>
+            <div class="palette-swatch" style="background:#b8860b; color:#fff;" onclick="applyPresetPalette('#b8860b', '#fdf0d5')">Golden Amber</div>
+            <div class="palette-swatch" style="background:#1d3557; color:#fff;" onclick="applyPresetPalette('#1d3557', '#f1faee')">Midnight Navy</div>
+            <div class="palette-swatch" style="background:#780000; color:#fff;" onclick="applyPresetPalette('#780000', '#fdf0ed')">Rosewood</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+            <div>
+                <label style="font-size:0.75rem; font-weight:500;">Custom Accent Color</label>
+                <input type="color" id="picker-burgundy" value="#6b2d39" style="width:100%; height:38px; padding:4px; cursor:pointer;">
+            </div>
+            <div>
+                <label style="font-size:0.75rem; font-weight:500;">Custom Card Background</label>
+                <input type="color" id="picker-card" value="#ebdcc9" style="width:100%; height:38px; padding:4px; cursor:pointer;">
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px;">
+            <button class="btn-primary" style="background: var(--text-muted);" onclick="closeThemeModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveThemeStudioSettings()">Apply Colors</button>
+        </div>
+    </div>
+</div>
+
 <!-- Account Settings Modal -->
 <div class="modal-overlay" id="account-modal">
     <div class="modal-content">
-        <h3 style="color: var(--burgundy); margin-bottom: 12px;">Scholar Profile Settings</h3>
+        <h3 style="color: var(--burgundy); margin-bottom: 12px;">Scholar Profile & Cloud</h3>
         <label style="font-size:0.8rem; font-weight:500;">Your Name</label>
         <input type="text" id="modal-name-input" value="Scholar Account">
         
@@ -918,7 +1141,7 @@
 
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
             <button class="btn-primary" style="background: var(--text-muted);" onclick="closeAccountModal()">Cancel</button>
-            <button class="btn-primary" onclick="saveAccountSettings()">Save Settings</button>
+            <button class="btn-primary" onclick="saveAccountSettings()">Save Profile</button>
         </div>
     </div>
 </div>
@@ -953,8 +1176,10 @@
         accountName: localStorage.getItem('dayzero_name') || 'Scholar Account',
         gmail: localStorage.getItem('dayzero_gmail') || '',
         theme: localStorage.getItem('dayzero_theme') || 'light',
+        customBurgundy: localStorage.getItem('dayzero_color_burgundy') || '',
+        customCard: localStorage.getItem('dayzero_color_card') || '',
         calYear: 2026,
-        calMonth: 9, // 0 = Jan, 9 = October
+        calMonth: 9,
         satAttempted: 0,
         satCorrect: 0,
         library: [
@@ -992,24 +1217,63 @@
         isAudioPlaying: false
     };
 
-    // Apply Theme on Load
+    // Apply Theme and Custom Colors on Load
     if(state.theme === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
     }
+    if(state.customBurgundy) {
+        document.documentElement.style.setProperty('--burgundy', state.customBurgundy);
+        document.documentElement.style.setProperty('--burgundy-light', state.customBurgundy);
+    }
+    if(state.customCard) {
+        document.documentElement.style.setProperty('--bg-card', state.customCard);
+    }
 
-    function toggleTheme() {
+    function openThemeModal() {
+        if(state.customBurgundy) document.getElementById('picker-burgundy').value = state.customBurgundy;
+        if(state.customCard) document.getElementById('picker-card').value = state.customCard;
+        document.getElementById('theme-modal').style.display = 'flex';
+    }
+
+    function closeThemeModal() {
+        document.getElementById('theme-modal').style.display = 'none';
+    }
+
+    function toggleThemeMode() {
         state.theme = state.theme === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', state.theme);
         localStorage.setItem('dayzero_theme', state.theme);
     }
 
-    // Toggle Sidebar Collapsed State
+    function applyPresetPalette(accentColor, cardColor) {
+        document.getElementById('picker-burgundy').value = accentColor;
+        document.getElementById('picker-card').value = cardColor;
+    }
+
+    function saveThemeStudioSettings() {
+        state.customBurgundy = document.getElementById('picker-burgundy').value;
+        state.customCard = document.getElementById('picker-card').value;
+
+        localStorage.setItem('dayzero_color_burgundy', state.customBurgundy);
+        localStorage.setItem('dayzero_color_card', state.customCard);
+
+        document.documentElement.style.setProperty('--burgundy', state.customBurgundy);
+        document.documentElement.style.setProperty('--burgundy-light', state.customBurgundy);
+        document.documentElement.style.setProperty('--bg-card', state.customCard);
+
+        closeThemeModal();
+    }
+
     function toggleSidebarSize() {
         const sidebar = document.getElementById('main-sidebar');
         sidebar.classList.toggle('collapsed');
     }
 
-    // Live Universal Clock & Date
+    function toggleMobileDrawer() {
+        const drawer = document.getElementById('mobile-drawer');
+        drawer.style.display = (drawer.style.display === 'flex') ? 'none' : 'flex';
+    }
+
     function updateClock() {
         const now = new Date();
         document.getElementById('live-clock').innerText = now.toUTCString().slice(17, 25) + " UTC";
@@ -1017,7 +1281,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Tab Navigation
     function switchTab(id) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1033,7 +1296,12 @@
         if(id === 'archive') renderCalendarGrid();
     }
 
-    // Lo-Fi Audio Toggle
+    function switchTabMobile(id, btnEl) {
+        switchTab(id);
+        document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+        if(btnEl) btnEl.classList.add('active');
+    }
+
     function toggleLofiAudio() {
         const audio = document.getElementById('lofi-audio');
         const status = document.getElementById('audio-status');
@@ -1051,7 +1319,6 @@
         }
     }
 
-    // Pomodoro Timer
     function startPomodoro() {
         if(state.isPomodoroRunning && !state.isPomodoroPaused) return;
         state.isPomodoroRunning = true;
@@ -1094,30 +1361,32 @@
         document.getElementById('pomodoro-pause-btn').innerText = "Pause ⏸";
     }
 
-    // Account & Cloud Sync
     function openAccountModal() { 
         document.getElementById('modal-name-input').value = state.accountName;
         document.getElementById('modal-gmail-input').value = state.gmail;
         document.getElementById('account-modal').style.display = 'flex'; 
     }
     function closeAccountModal() { document.getElementById('account-modal').style.display = 'none'; }
+
     function saveAccountSettings() {
         state.accountName = document.getElementById('modal-name-input').value;
         state.gmail = document.getElementById('modal-gmail-input').value;
+
         localStorage.setItem('dayzero_name', state.accountName);
         localStorage.setItem('dayzero_gmail', state.gmail);
+
         document.getElementById('account-name-disp').innerText = state.accountName;
         if(state.gmail) {
             document.getElementById('cloud-status-text').innerText = `Linked: ${state.gmail}`;
         }
         closeAccountModal();
     }
+
     function triggerCloudSync() {
         alert(state.gmail ? `Cloud Sync initialized for ${state.gmail}! Local workspace is synchronized.` : "Please link an Email address in Settings first.");
     }
     document.getElementById('account-name-disp').innerText = state.accountName;
 
-    // Study Planner
     function addPlannerEntry() {
         const text = document.getElementById('planner-task-input').value.trim();
         const subject = document.getElementById('planner-subject').value;
@@ -1182,7 +1451,6 @@
         document.getElementById('prog-focus-val').innerText = pct + '%';
     }
 
-    // Learning Library & Surprise Me
     function renderLibrary() {
         document.getElementById('library-grid').innerHTML = state.library.map(l => `
             <div style="background: var(--bg-input); border: 1px solid var(--border-vintage); border-left: 4px solid var(--burgundy); padding: 16px; border-radius: 6px;">
@@ -1212,7 +1480,6 @@
         document.getElementById('surprise-box').style.display = 'block';
     }
 
-    // SAT Reading & Grammar Engine
     const satMathBank = [
         { 
             q: "If 3x - y = 12, what is the value of 8^x / 2^y ?", 
@@ -1319,7 +1586,6 @@
         expBox.innerHTML = isCorrect ? `<strong>Correct!</strong> ${explanation}` : `<strong>Incorrect.</strong> ${explanation}`;
     }
 
-    // Weakness Ledger
     function addWeaknessItem() {
         const concept = document.getElementById('weak-concept').value.trim();
         const subject = document.getElementById('weak-subject').value;
@@ -1360,7 +1626,6 @@
         `).join('');
     }
 
-    // Notes Studio
     function generatePracticeQuestionsAndFlashcards() {
         state.isTestMode = false;
         document.getElementById('deck-title-display').innerText = "Active Recall Deck";
@@ -1484,7 +1749,6 @@
         nextCard();
     }
 
-    // Private Diary
     function unlockDiary() {
         const pin = document.getElementById('diary-pin').value;
         if(pin === state.pin) {
@@ -1542,7 +1806,6 @@
         `).join('');
     }
 
-    // Dynamic Calendar Engine (Study Archive)
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     function prevMonth() {
@@ -1575,21 +1838,19 @@
         document.getElementById('calendar-month-title').innerText = `${monthNames[state.calMonth]} ${state.calYear}`;
 
         let html = `
-            <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Mon</div>
-            <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Tue</div>
-            <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Wed</div>
-            <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Thu</div>
-            <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Fri</div>
-            <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Sat</div>
-            <div style="text-align:center; font-weight:600; font-size:0.8rem; color:var(--text-muted);">Sun</div>
+            <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Mon</div>
+            <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Tue</div>
+            <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Wed</div>
+            <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Thu</div>
+            <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Fri</div>
+            <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Sat</div>
+            <div style="text-align:center; font-weight:600; font-size:0.75rem; color:var(--text-muted);">Sun</div>
         `;
 
         const firstDayIndex = new Date(state.calYear, state.calMonth, 1).getDay();
-        // Adjust for Mon-Sun starting index
         const startOffset = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
         const totalDaysInMonth = new Date(state.calYear, state.calMonth + 1, 0).getDate();
 
-        // Empty padding cells for previous month days
         for(let p = 0; p < startOffset; p++) {
             html += `<div style="background:transparent; border:1px dashed transparent;"></div>`;
         }
@@ -1597,11 +1858,11 @@
         for(let day = 1; day <= totalDaysInMonth; day++) {
             let dateKey = `${state.calYear}-${String(state.calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             let entry = state.archiveDays[dateKey];
-            let headingText = entry && entry.heading ? `<div style="font-size:0.6rem; color:var(--burgundy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;">${entry.heading}</div>` : '';
+            let headingText = entry && entry.heading ? `<div style="font-size:0.55rem; color:var(--burgundy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;">${entry.heading}</div>` : '';
             let bg = entry ? 'var(--bg-card)' : 'var(--bg-input)';
             let border = entry ? 'var(--burgundy)' : 'var(--border-vintage)';
 
-            html += `<div onclick="openArchiveModal('${dateKey}')" style="cursor:pointer; aspect-ratio:1; background:${bg}; border:1px solid ${border}; border-radius:6px; padding:4px; font-size:0.8rem; transition: all 0.2s; overflow:hidden;"><strong style="color:var(--burgundy);">${day}</strong>${headingText}</div>`;
+            html += `<div onclick="openArchiveModal('${dateKey}')" style="cursor:pointer; aspect-ratio:1; background:${bg}; border:1px solid ${border}; border-radius:4px; padding:3px; font-size:0.75rem; transition: all 0.2s; overflow:hidden;"><strong style="color:var(--burgundy);">${day}</strong>${headingText}</div>`;
         }
 
         grid.innerHTML = html;
@@ -1682,7 +1943,6 @@
         `).join('');
     }
 
-    // File Upload Handler
     async function handleFileUpload(e) {
         const file = e.target.files[0];
         if(!file) return;
@@ -1727,7 +1987,6 @@
         }
     }
 
-    // Initialization & Analytics Charts
     window.onload = function() {
         renderLibrary();
         renderPlannerEntries();
@@ -1740,7 +1999,6 @@
             document.getElementById('cloud-status-text').innerText = `Linked: ${state.gmail}`;
         }
 
-        // Progress Subject Chart
         const ctx2 = document.getElementById('progressSubjectChart').getContext('2d');
         new Chart(ctx2, {
             type: 'doughnut',
@@ -1754,7 +2012,6 @@
             options: { responsive: true, maintainAspectRatio: false }
         });
 
-        // Progress Trend Chart
         const ctx3 = document.getElementById('progressTrendChart').getContext('2d');
         new Chart(ctx3, {
             type: 'line',
